@@ -16,6 +16,7 @@
 #include <AzCore/Asset/AssetManager.h>
 #include <AzCore/Asset/AssetManagerBus.h>
 #include <AzCore/Asset/AssetSerializer.h>
+#include <AzCore/Component/ComponentApplicationBus.h>
 #include <AzCore/Serialization/SerializeContext.h>
 
 #include <AzFramework/Entity/EntityContextBus.h>
@@ -98,6 +99,15 @@ namespace AZ
 
             TransformNotificationBus::Handler::BusConnect(m_entityId);
             AzFramework::BoundsRequestBus::Handler::BusConnect(entityId);
+
+            // If we are running headless, then don't initialize the feature processor
+            AZ::ApplicationTypeQuery appType;
+            ComponentApplicationBus::Broadcast(&AZ::ComponentApplicationBus::Events::QueryApplicationType, appType);
+            if (appType.IsHeadless())
+            {
+                m_featureProcessor = nullptr;
+                return;
+            }
 
             m_featureProcessor = RPI::Scene::GetFeatureProcessorForEntity<ReflectionProbeFeatureProcessorInterface>(entityId);
             AZ_Assert(m_featureProcessor, "ReflectionProbeComponentController was unable to find a ReflectionProbeFeatureProcessor on the EntityContext provided.");

@@ -599,7 +599,7 @@ namespace AZ
                         // what's being rendered into XR device. XR render pipeline uses multiview render pipeline.
                         AZ::ApplicationTypeQuery appType;
                         ComponentApplicationBus::Broadcast(&AZ::ComponentApplicationBus::Events::QueryApplicationType, appType);
-                        if (appType.IsGame())
+                        if (appType.IsGame() && !appType.IsHeadless())
                         {
                             pipelineName = r_default_openxr_pipeline_name;
                         }
@@ -834,7 +834,7 @@ namespace AZ
                 {
                     AZ::ApplicationTypeQuery appType;
                     ComponentApplicationBus::Broadcast(&AZ::ComponentApplicationBus::Events::QueryApplicationType, appType);
-                    if (appType.IsGame())
+                    if (appType.IsGame() && !appType.IsHeadless())
                     {
                         m_viewportContext->RenderTick();
                     }
