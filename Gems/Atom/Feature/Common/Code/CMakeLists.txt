@@ -98,6 +98,8 @@ ly_add_target(
         atom_feature_common_shared_files.cmake
         ../Assets/atom_feature_common_asset_files.cmake
         ../Editor/atom_feature_common_editor_script_files.cmake
+    PLATFORM_INCLUDE_FILES
+        ${pal_source_dir}/runtime_dependencies_headless.cmake
     INCLUDE_DIRECTORIES
         PRIVATE
             Source
@@ -106,7 +108,7 @@ ly_add_target(
             Include
     COMPILE_DEFINITIONS
         PRIVATE
-            O3DE_HEADLESS_SERVER=1
+            O3DE_HEADLESS=1
     BUILD_DEPENDENCIES
         PRIVATE
             AZ::AzCore

@@ -74,7 +74,7 @@ namespace AZ
     } // namespace Render
 } // namespace AZ
 
-#if O3DE_HEADLESS_SERVER
+#if O3DE_HEADLESS
     #if defined(O3DE_GEM_NAME)
     AZ_DECLARE_MODULE_CLASS(AZ_JOIN(Gem_, O3DE_GEM_NAME, _Headless), AZ::Render::CommonModule)
     #else
@@ -86,4 +86,4 @@ namespace AZ
     #else
     AZ_DECLARE_MODULE_CLASS(Gem_Atom_Feature_Common, AZ::Render::CommonModule)
     #endif
-#endif // O3DE_HEADLESS_SERVER
+#endif // O3DE_HEADLESS

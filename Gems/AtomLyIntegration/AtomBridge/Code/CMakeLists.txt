@@ -85,7 +85,7 @@ ly_add_target(
     COMPILE_DEFINITIONS
         PRIVATE
             ENABLE_ATOM_DEBUG_DISPLAY=1
-            O3DE_HEADLESS_SERVER=1
+            O3DE_HEADLESS=1
     BUILD_DEPENDENCIES
         PRIVATE
             Gem::${gem_name}.Static
@@ -109,6 +109,7 @@ ly_create_alias(NAME ${gem_name}.Clients NAMESPACE Gem TARGETS Gem::${gem_name})
 ly_create_alias(NAME ${gem_name}.Servers NAMESPACE Gem TARGETS Gem::${gem_name})
 ly_create_alias(NAME ${gem_name}.Unified NAMESPACE Gem TARGETS Gem::${gem_name})
 ly_create_alias(NAME ${gem_name}.HeadlessServers NAMESPACE Gem TARGETS Gem::${gem_name}.Headless)
+ly_create_alias(NAME ${gem_name}.HeadlessClients NAMESPACE Gem TARGETS Gem::${gem_name}.Headless)
 
 if(PAL_TRAIT_BUILD_HOST_TOOLS)
 
