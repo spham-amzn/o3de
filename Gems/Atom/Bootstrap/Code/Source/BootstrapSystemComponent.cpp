@@ -327,14 +327,8 @@ namespace AZ
                 AZ::ApplicationTypeQuery appType;
                 ComponentApplicationBus::Broadcast(&AZ::ComponentApplicationBus::Events::QueryApplicationType, appType);
 
-                // Check for any Registry Setting override for the flag to create the native window or not. 
-                const auto* settingsRegistry = AZ::SettingsRegistry::Get();
-                if (settingsRegistry)
+                if (appType.IsHeadless() || appType.IsConsoleMode())
                 {
-                    settingsRegistry->Get(m_createNativeWindow, "/O3DE/Atom/Bootstrap/CreateNativeWindow");
-                }
-
-                if (appType.IsHeadless() || !m_createNativeWindow )                {
                     m_nativeWindow = nullptr;
                 }
                 else if (!appType.IsValid() || appType.IsGame())
@@ -441,18 +435,6 @@ namespace AZ
                     if (m_createDefaultScene)
                     {
                         CreateDefaultRenderPipeline();
-                    }
-                }
-                else
-                {
-                    AZ::ApplicationTypeQuery appType;
-                    ComponentApplicationBus::Broadcast(&AZ::ComponentApplicationBus::Events::QueryApplicationType, appType);
-                    if (!appType.IsHeadless())
-                    {
-                        // Unless we are in headless mode, the application multisamplestate needs to be set and initialized
-                        // so that the shader's SuperVariant name is set and the scene's render pipelines and re-initialized
-                        AZ::RHI::MultisampleState multisampleState;
-                        AZ::RPI::RPISystemInterface::Get()->SetApplicationMultisampleState(multisampleState);
                     }
                 }
             }

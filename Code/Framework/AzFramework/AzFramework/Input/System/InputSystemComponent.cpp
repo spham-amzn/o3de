@@ -223,16 +223,15 @@ namespace AzFramework
             settingsRegistry->Get(m_virtualKeyboardEnabled, "/O3DE/InputSystem/VirtualKeyboardEnabled");
             settingsRegistry->Get(m_captureMouseCursor, "/O3DE/InputSystem/Mouse/CaptureMouseCursor");
 
+            // Check if option to capture the mouse cursor is set or not.
             bool captureMouseCursor{ true };
             settingsRegistry->Get(captureMouseCursor, "/O3DE/InputSystem/Mouse/CaptureMouseCursor");
 
-            bool nativeWindowEnabled{ true };
-            settingsRegistry->Get(nativeWindowEnabled, "/O3DE/Atom/Bootstrap/CreateNativeWindow");
-
+            // Make sure that we only disable capturing the mouse (if specified) when we are running in either headless mode or console mode.
             AZ::ApplicationTypeQuery appType;
             AZ::ComponentApplicationBus::Broadcast(&AZ::ComponentApplicationBus::Events::QueryApplicationType, appType);
 
-            m_captureMouseCursor = (captureMouseCursor && (nativeWindowEnabled || appType.IsEditor()));
+            m_captureMouseCursor = (captureMouseCursor && (!appType.IsHeadless() && !appType.IsConsoleMode()) || appType.IsEditor());
         }
 
         // Create all enabled input devices
