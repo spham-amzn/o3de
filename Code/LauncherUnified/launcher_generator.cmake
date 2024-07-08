@@ -9,8 +9,25 @@
 # This will be used to turn on "PerMonitor" DPI scaling support. (Currently there is no way in CMake to specify "PerMonitorV2")
 set(O3DE_DPI_AWARENESS "PerMonitor")
 
-set_property(GLOBAL PROPERTY GAME_LAUNCHER_TYPES GameLauncher HeadlessGameLauncher)
-set_property(GLOBAL PROPERTY SERVER_LAUNCHER_TYPES ServerLauncher HeadlessServerLauncher)
+set(O3DE_ENABLE_HEADLESS_SERVER_LAUNCHER FALSE CACHE BOOL "Option to enable the ability to build headless server launchers")
+set(O3DE_ENABLE_HEADLESS_GAME_LAUNCHER FALSE CACHE BOOL "Option to enable the ability to build headless game launchers")
+
+if (O3DE_ENABLE_HEADLESS_SERVER_LAUNCHER)
+    message("Headless server enabled")
+    set_property(GLOBAL PROPERTY SERVER_LAUNCHER_TYPES ServerLauncher HeadlessServerLauncher)
+else()
+    message("Headless server disabled")
+    set_property(GLOBAL PROPERTY SERVER_LAUNCHER_TYPES ServerLauncher)
+endif() # O3DE_ENABLE_HEADLESS_SERVER_LAUNCHER
+
+if (O3DE_ENABLE_HEADLESS_GAME_LAUNCHER)
+    message("Headless game enabled")
+    set_property(GLOBAL PROPERTY GAME_LAUNCHER_TYPES GameLauncher HeadlessGameLauncher)
+else()
+    message("Headless game disabled")
+    set_property(GLOBAL PROPERTY GAME_LAUNCHER_TYPES GameLauncher)
+endif() # O3DE_ENABLE_HEADLESS_GAME_LAUNCHER
+
 set_property(GLOBAL PROPERTY LAUNCHER_UNIFIED_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(GAME_LAUNCHERTYPE_GameLauncher APPLICATION)
