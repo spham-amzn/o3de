@@ -13,18 +13,18 @@ set(O3DE_ENABLE_HEADLESS_SERVER_LAUNCHER FALSE CACHE BOOL "Option to enable the 
 set(O3DE_ENABLE_HEADLESS_GAME_LAUNCHER FALSE CACHE BOOL "Option to enable the ability to build headless game launchers")
 
 if (O3DE_ENABLE_HEADLESS_SERVER_LAUNCHER)
-    message("Headless server enabled")
+    message(VERBOSE "Headless server launcher enabled")
     set_property(GLOBAL PROPERTY SERVER_LAUNCHER_TYPES ServerLauncher HeadlessServerLauncher)
 else()
-    message("Headless server disabled")
+    message(VERBOSE "Headless server launcher disabled")
     set_property(GLOBAL PROPERTY SERVER_LAUNCHER_TYPES ServerLauncher)
 endif() # O3DE_ENABLE_HEADLESS_SERVER_LAUNCHER
 
 if (O3DE_ENABLE_HEADLESS_GAME_LAUNCHER)
-    message("Headless game enabled")
+    message(VERBOSE "Headless game launcher enabled")
     set_property(GLOBAL PROPERTY GAME_LAUNCHER_TYPES GameLauncher HeadlessGameLauncher)
 else()
-    message("Headless game disabled")
+    message(VERBOSE "Headless game launcher disabled")
     set_property(GLOBAL PROPERTY GAME_LAUNCHER_TYPES GameLauncher)
 endif() # O3DE_ENABLE_HEADLESS_GAME_LAUNCHER
 
