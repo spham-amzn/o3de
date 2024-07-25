@@ -148,6 +148,15 @@ namespace AZ
         void DirectionalLightComponentController::Activate(EntityId entityId)
         {
             m_entityId = entityId;
+
+            // If we are running headless, then don't initialize the feature processor
+            AZ::ApplicationTypeQuery appType;
+            ComponentApplicationBus::Broadcast(&AZ::ComponentApplicationBus::Events::QueryApplicationType, appType);
+            if (appType.IsHeadless())
+            {
+                return;
+            }
+
             m_featureProcessor = RPI::Scene::GetFeatureProcessorForEntity<DirectionalLightFeatureProcessorInterface>(entityId);
             AZ_Error("DirectionalLightComponentController", m_featureProcessor, "Could not find a DirectionalLightFeatureProcessorInterface on the scene.");
 

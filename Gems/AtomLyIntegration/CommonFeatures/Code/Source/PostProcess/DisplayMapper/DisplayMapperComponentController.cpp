@@ -365,12 +365,15 @@ namespace AZ
         {
             // Register the configuration with the  AcesDisplayMapperFeatureProcessor for this scene.
             DisplayMapperFeatureProcessorInterface* fp = AZ::RPI::Scene::GetFeatureProcessorForEntity<DisplayMapperFeatureProcessorInterface>(m_entityId);
-            DisplayMapperConfigurationDescriptor desc;
-            desc.m_operationType = m_configuration.m_displayMapperOperation;
-            desc.m_ldrGradingLutEnabled = m_configuration.m_ldrColorGradingLutEnabled;
-            desc.m_ldrColorGradingLut = m_configuration.m_ldrColorGradingLut;
-            desc.m_acesParameterOverrides = m_configuration.m_acesParameterOverrides;
-            fp->RegisterDisplayMapperConfiguration(desc);
+            if (fp)
+            {
+                DisplayMapperConfigurationDescriptor desc;
+                desc.m_operationType = m_configuration.m_displayMapperOperation;
+                desc.m_ldrGradingLutEnabled = m_configuration.m_ldrColorGradingLutEnabled;
+                desc.m_ldrColorGradingLut = m_configuration.m_ldrColorGradingLut;
+                desc.m_acesParameterOverrides = m_configuration.m_acesParameterOverrides;
+                fp->RegisterDisplayMapperConfiguration(desc);
+            }
         }
 
     } // namespace Render

@@ -6,6 +6,7 @@
  *
  */
 
+#include <AzCore/Component/ComponentApplicationBus.h>
 #include <Atom/RPI.Public/Scene.h>
 
 namespace AZ
@@ -15,12 +16,23 @@ namespace AZ
         template <typename FeatureProcessorType>
         LightDelegateBase<FeatureProcessorType>::LightDelegateBase(EntityId entityId, bool isVisible)
         {
-            m_featureProcessor = RPI::Scene::GetFeatureProcessorForEntity<FeatureProcessorType>(entityId);
-            AZ_Error("LightDelegateBase", m_featureProcessor, "Unable to find a %s on the scene.", FeatureProcessorType::RTTI_TypeName());
+            // If we are running headless, then don't initialize the feature processor
+            AZ::ApplicationTypeQuery appType;
 
-            if (m_featureProcessor && isVisible)
+            ComponentApplicationBus::Broadcast(&AZ::ComponentApplicationBus::Events::QueryApplicationType, appType);
+            if (appType.IsHeadless())
             {
-                m_lightHandle = m_featureProcessor->AcquireLight();
+                m_featureProcessor = nullptr;
+            }
+            else
+            {
+                m_featureProcessor = RPI::Scene::GetFeatureProcessorForEntity<FeatureProcessorType>(entityId);
+                AZ_Error("LightDelegateBase", m_featureProcessor, "Unable to find a %s on the scene.", FeatureProcessorType::RTTI_TypeName());
+
+                if (m_featureProcessor && isVisible)
+                {
+                    m_lightHandle = m_featureProcessor->AcquireLight();
+                }
             }
         }
 
@@ -29,7 +41,7 @@ namespace AZ
         {
             TransformNotificationBus::Handler::BusDisconnect();
             LmbrCentral::ShapeComponentNotificationsBus::Handler::BusDisconnect();
-            if (m_lightHandle.IsValid())
+            if (m_featureProcessor && m_lightHandle.IsValid())
             {
                 m_featureProcessor->ReleaseLight(m_lightHandle);
             }
@@ -49,7 +61,7 @@ namespace AZ
                 LmbrCentral::ShapeComponentNotificationsBus::Handler::BusConnect(entityId);
                 OnShapeChanged(ShapeChangeReasons::TransformChanged);
             }
-            else if (m_lightHandle.IsValid())
+            else if (m_featureProcessor && m_lightHandle.IsValid())
             {
                 // Only connect to the transform bus if there's no shape bus, otherwise the shape bus handles transforms.
                 TransformNotificationBus::Handler::BusConnect(entityId);
@@ -68,7 +80,7 @@ namespace AZ
         void LightDelegateBase<FeatureProcessorType>::SetChroma(const Color& color)
         {
             m_photometricValue.SetChroma(color);
-            if (m_lightHandle.IsValid())
+            if (m_featureProcessor && m_lightHandle.IsValid())
             {
                 m_featureProcessor->SetRgbIntensity(m_lightHandle, m_photometricValue.GetCombinedRgb<FeatureProcessorType::PhotometricUnitType>());
             }
@@ -78,7 +90,7 @@ namespace AZ
         void LightDelegateBase<FeatureProcessorType>::SetIntensity(float intensity)
         {
             m_photometricValue.SetIntensity(intensity);
-            if (m_lightHandle.IsValid())
+            if (m_featureProcessor && m_lightHandle.IsValid())
             {
                 m_featureProcessor->SetRgbIntensity(m_lightHandle, m_photometricValue.GetCombinedRgb<FeatureProcessorType::PhotometricUnitType>());
             }
@@ -89,7 +101,7 @@ namespace AZ
         {
             m_photometricValue.SetArea(GetSurfaceArea());
             m_photometricValue.ConvertToPhotometricUnit(unit);
-            if (m_lightHandle.IsValid())
+            if (m_featureProcessor && m_lightHandle.IsValid())
             {
                 m_featureProcessor->SetRgbIntensity(m_lightHandle, m_photometricValue.GetCombinedRgb<FeatureProcessorType::PhotometricUnitType>());
             }
@@ -107,7 +119,7 @@ namespace AZ
             m_shapeBus->GetTransformAndLocalBounds(entityTransform, aabb);
             m_transform = ComputeOverallTransform(entityTransform);
             m_photometricValue.SetArea(GetSurfaceArea());
-            if (m_lightHandle.IsValid())
+            if (m_featureProcessor && m_lightHandle.IsValid())
             {
                 m_featureProcessor->SetRgbIntensity(m_lightHandle, m_photometricValue.GetCombinedRgb<FeatureProcessorType::PhotometricUnitType>());
             }
@@ -134,7 +146,10 @@ namespace AZ
             if (m_lightHandle.IsValid() && !isVisible)
             {
                 // no longer visible, release light handle
-                m_featureProcessor->ReleaseLight(m_lightHandle);
+                if (m_featureProcessor)
+                {
+                    m_featureProcessor->ReleaseLight(m_lightHandle);
+                }
             }
             else if (!m_lightHandle.IsValid() && isVisible && m_featureProcessor)
             {
@@ -156,7 +171,7 @@ namespace AZ
         template <typename FeatureProcessorType>
         void LightDelegateBase<FeatureProcessorType>::SetAttenuationRadius(float radius)
         {
-            if (m_lightHandle.IsValid())
+            if (m_featureProcessor && m_lightHandle.IsValid())
             {
                 m_featureProcessor->SetAttenuationRadius(m_lightHandle, radius);
             }
@@ -165,7 +180,7 @@ namespace AZ
         template<typename FeatureProcessorType>
         void LightDelegateBase<FeatureProcessorType>::SetLightingChannelMask(uint32_t lightingChannelMask)
         {
-            if (m_lightHandle.IsValid())
+            if (m_featureProcessor && m_lightHandle.IsValid())
             {
                 m_featureProcessor->SetLightingChannelMask(m_lightHandle, lightingChannelMask);
             }

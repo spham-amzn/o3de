@@ -38,7 +38,7 @@ namespace AZ
 } // namespace AZ
 
 #ifndef EDITOR
-#if O3DE_HEADLESS_SERVER
+#if O3DE_HEADLESS
     #if defined(O3DE_GEM_NAME)
     AZ_DECLARE_MODULE_CLASS(AZ_JOIN(Gem_, O3DE_GEM_NAME, _Headless), AZ::AtomBridge::Module)
     #else
@@ -50,5 +50,5 @@ namespace AZ
     #else
     AZ_DECLARE_MODULE_CLASS(Gem_Atom_AtomBridge, AZ::AtomBridge::Module)
     #endif
-#endif // O3DE_HEADLESS_SERVER
+#endif // O3DE_HEADLESS
 #endif

@@ -9,6 +9,7 @@
 #include <ImageBasedLights/ImageBasedLightComponentController.h>
 #include <AtomLyIntegration/CommonFeatures/ImageBasedLights/ImageBasedLightComponentConstants.h>
 #include <AzCore/RTTI/BehaviorContext.h>
+#include <AzCore/Component/ComponentApplicationBus.h>
 #include <AzCore/Serialization/SerializeContext.h>
 #include <Atom/RPI.Public/Scene.h>
 #include <Atom/Utils/Utils.h>
@@ -67,24 +68,35 @@ namespace AZ
         {
             m_entityId = entityId;
 
-            m_featureProcessor = RPI::Scene::GetFeatureProcessorForEntity<ImageBasedLightFeatureProcessorInterface>(m_entityId);
-            AZ_Error("ImageBasedLightComponentController", m_featureProcessor, "Unable to find a ImageBasedLightFeatureProcessorInterface on this entity's scene.");
+            // If we are running headless, then don't initialize the feature processor
+            AZ::ApplicationTypeQuery appType;
 
-            if (m_featureProcessor)
+            ComponentApplicationBus::Broadcast(&AZ::ComponentApplicationBus::Events::QueryApplicationType, appType);
+            if (appType.IsHeadless())
             {
-                LoadImage(m_configuration.m_specularImageAsset);
-                LoadImage(m_configuration.m_diffuseImageAsset);
-                m_featureProcessor->SetExposure(m_configuration.m_exposure);
+                m_featureProcessor = nullptr;
+            }
+            else
+            {
+                m_featureProcessor = RPI::Scene::GetFeatureProcessorForEntity<ImageBasedLightFeatureProcessorInterface>(m_entityId);
+                AZ_Error("ImageBasedLightComponentController", m_featureProcessor, "Unable to find a ImageBasedLightFeatureProcessorInterface on this entity's scene.");
 
-                TransformInterface* transformInterface = TransformBus::FindFirstHandler(m_entityId);
-                AZ_Assert(transformInterface, "Unable to attach to a TransformBus handler. Entity transform will not affect IBL.");
+                if (m_featureProcessor)
+                {
+                    LoadImage(m_configuration.m_specularImageAsset);
+                    LoadImage(m_configuration.m_diffuseImageAsset);
+                    m_featureProcessor->SetExposure(m_configuration.m_exposure);
 
-                const AZ::Transform& transform = transformInterface ? transformInterface->GetWorldTM() : Transform::Identity();
-                m_featureProcessor->SetOrientation(transform.GetRotation());
+                    TransformInterface* transformInterface = TransformBus::FindFirstHandler(m_entityId);
+                    AZ_Assert(transformInterface, "Unable to attach to a TransformBus handler. Entity transform will not affect IBL.");
 
-                TransformNotificationBus::Handler::BusConnect(m_entityId);
-                ImageBasedLightComponentRequestBus::Handler::BusConnect(m_entityId);
-                transformInterface = nullptr;
+                    const AZ::Transform& transform = transformInterface ? transformInterface->GetWorldTM() : Transform::Identity();
+                    m_featureProcessor->SetOrientation(transform.GetRotation());
+
+                    TransformNotificationBus::Handler::BusConnect(m_entityId);
+                    ImageBasedLightComponentRequestBus::Handler::BusConnect(m_entityId);
+                    transformInterface = nullptr;
+                }
             }
         }
 

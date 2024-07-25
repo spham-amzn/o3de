@@ -9,6 +9,7 @@
 # This file contains utility wrappers for dealing with the Gems system.
 
 set(GEM_VARIANT_DEFAULT_HeadlessServers Servers)
+set(GEM_VARIANT_DEFAULT_HeadlessClients Clients)
 
 define_property(TARGET PROPERTY LY_PROJECT_NAME
     BRIEF_DOCS "Name of the project, this target can use enabled gems from"

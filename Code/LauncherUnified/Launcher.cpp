@@ -438,12 +438,12 @@ namespace O3DELauncher
         settingsRegistry->Set(LauncherTypeTag, launcherType);
         // Also add the launcher type as a specialization as well
         AZ::SettingsRegistryMergeUtils::MergeSettingsToRegistry_AddSpecialization(*settingsRegistry, launcherType);
-#if O3DE_HEADLESS_SERVER
+#if O3DE_HEADLESS
         AZ::SettingsRegistryMergeUtils::MergeSettingsToRegistry_AddSpecialization(*settingsRegistry, "headless");
         gameApplication.SetHeadless(true);
 #else
         gameApplication.SetHeadless(false);
-#endif // O3DE_HEADLESS_SERVER
+#endif // O3DE_HEADLESS
 
 #if AZ_TRAIT_CONSOLE_MODE_SUPPORT
         gameApplication.SetConsoleModeSupported(true);

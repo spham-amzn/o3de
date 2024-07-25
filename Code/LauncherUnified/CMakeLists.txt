@@ -61,7 +61,6 @@ ly_add_target(
     BUILD_DEPENDENCIES
         PRIVATE
             AZ::AzCore
-            AZ::AzGameFramework
             Legacy::CryCommon
 )
 

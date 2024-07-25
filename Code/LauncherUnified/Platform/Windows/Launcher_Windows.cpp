@@ -10,7 +10,7 @@
 #include <AzCore/Math/Vector2.h>
 #include <AzCore/Memory/SystemAllocator.h>
 
-#if O3DE_HEADLESS_SERVER
+#if O3DE_HEADLESS
 int main(int argc, char* argv[])
 {
     int argCount = argc;
@@ -20,7 +20,7 @@ int APIENTRY WinMain([[maybe_unused]] HINSTANCE hInstance, [[maybe_unused]] HINS
 {
     int argCount = __argc;
     char** argValues = __argv;
-#endif // O3DE_HEADLESS_SERVER
+#endif // O3DE_HEADLESS
 
     const AZ::Debug::Trace tracer;
     InitRootDir();
@@ -35,7 +35,7 @@ int APIENTRY WinMain([[maybe_unused]] HINSTANCE hInstance, [[maybe_unused]] HINS
 
     ReturnCode status = Run(mainInfo);
 
-#if !O3DE_HEADLESS_SERVER
+#if !O3DE_HEADLESS
 
     #if !defined(_RELEASE)
     bool noPrompt = (strstr(mainInfo.m_commandLine, "-noprompt") != nullptr);
@@ -47,7 +47,7 @@ int APIENTRY WinMain([[maybe_unused]] HINSTANCE hInstance, [[maybe_unused]] HINS
     {
         MessageBoxA(0, GetReturnCodeString(status), "Error", MB_OK | MB_DEFAULT_DESKTOP_ONLY | MB_ICONERROR);
     }
-#endif // !O3DE_HEADLESS_SERVER
+#endif // !O3DE_HEADLESS
 
     return static_cast<int>(status);
 }
