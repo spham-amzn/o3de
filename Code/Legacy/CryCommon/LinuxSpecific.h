@@ -98,8 +98,6 @@ typedef uint64 __uint64;
 
 #define _PTRDIFF_T_DEFINED 1
 
-//#define __TIMESTAMP__ __DATE__" "__TIME__
-
 // function renaming
 #define _finite __finite
 #define _snprintf snprintf
@@ -110,34 +108,6 @@ typedef uint64 __uint64;
 #define _strnicmp strncasecmp
 #define wcsicmp wcscasecmp
 #define wcsnicmp wcsncasecmp
-
-typedef union _LARGE_INTEGER
-{
-    struct
-    {
-        AZ::u32 LowPart;
-        LONG HighPart;
-    };
-    struct
-    {
-        AZ::u32 LowPart;
-        LONG HighPart;
-    } u;
-    long long QuadPart;
-} LARGE_INTEGER;
-
-enum
-{
-    IDOK        = 1,
-    IDCANCEL    = 2,
-    IDABORT     = 3,
-    IDRETRY     = 4,
-    IDIGNORE    = 5,
-    IDYES       = 6,
-    IDNO        = 7,
-    IDTRYAGAIN  = 10,
-    IDCONTINUE  = 11
-};
 
 #define MB_OK                0x00000000L
 #define MB_OKCANCEL          0x00000001L
@@ -202,22 +172,6 @@ struct _OVERLAPPED;
 
 
 #ifdef __cplusplus
-extern bool QueryPerformanceCounter(LARGE_INTEGER*);
-extern bool QueryPerformanceFrequency(LARGE_INTEGER* frequency);
-
-#if 0
-template<typename S, typename T>
-inline const S& min(const S& rS, const T& rT)
-{
-    return (rS <= rT) ? rS : rT;
-}
-
-template<typename S, typename T>
-inline const S& max(const S& rS, const T& rT)
-{
-    return (rS >= rT) ? rS : rT;
-}
-#endif
 
 template<typename S, typename T>
 inline S __min(const S& rS, const T& rT)
@@ -230,7 +184,6 @@ inline S __max(const S& rS, const T& rT)
 {
     return std::max(rS, rT);
 }
-
 
 typedef enum
 {
