@@ -438,13 +438,6 @@ typedef HANDLE HMENU;
 extern bool QueryPerformanceCounter(LARGE_INTEGER*);
 extern bool QueryPerformanceFrequency(LARGE_INTEGER* frequency);
 
-inline int64 CryGetTicks()
-{
-    LARGE_INTEGER counter;
-    QueryPerformanceCounter(&counter);
-    return counter.QuadPart;
-}
-
 #ifdef _RELEASE
 #define __debugbreak()
 #else
